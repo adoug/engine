@@ -1,0 +1,29 @@
+{
+  "name": "engine",
+  "version": "1.0.0",
+  "description": "Webgl 3d engine",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://deadmaus@bitbucket.org/deadmaus/engine.git"
+  },
+  "author": "Andrew Douglas",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/deadmaus/engine#readme",
+  "dependencies": {
+    "eslint": "^3.17.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-env": "^1.2.0",
+    "eslint": "^3.17.0",
+    "eslint-cli": "^1.1.0",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-plugin-import": "^2.2.0",
+    "webpack": "^2.2.1"
+  }
+}
