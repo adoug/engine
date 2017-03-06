@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Assignment 3 Task 2</title>
+    <script src="../Common/webgl-utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../Common/initShaders3.js" type="text/javascript"></script>
+    <script src="../Common/initShaders.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../Common/MV.js" type="text/javascript" charset="utf-8"></script>
+    <script src="WebGLRenderer.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Block.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Pyramid.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Cone.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Cylinder.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Plane.js" type="text/javascript" charset="utf-8"></script>
+    <script src="utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="Scene.js" type="text/javascript" charset="utf-8"></script>
+    <script src="app.js" type="text/javascript" charset="utf-8"></script>
+    <script src="ObjParser.js" type="text/javascript" charset="utf-8"></script>
+    <script src="SceneObj.js" type="text/javascript" charset="utf-8"></script>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition; 
+        uniform mat4 modelView; 
+        uniform mat4 projection; 
+        void main() 
+        { 
+            gl_Position = projection*modelView*vPosition; 
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float; 
+        uniform vec4 colour; 
+        void main() 
+        { 
+            gl_FragColor = colour; 
+        }
+    </script>
+
+    <script>
+    function toggleControls()
+    {
+        var controls = document.getElementById("controls");
+        var button = document.getElementById("toggleControls");
+        if(controls.style.display == "none")
+        {
+            controls.style.display = "block";
+            button.value = "Hide controls";
+        }
+        else
+        {
+            controls.style.display = "none";
+            button.value = "Show controls";
+        } 
+    }
+    </script>
+</head>
+
+<body>
+    <input type="button" id="toggleControls" value="Show Controls" onclick="toggleControls();" />
+    <div id="controls" style="display: none;">
+        <ul>
+            <li>W - forward</li>
+            <li>S - backwards</li>
+            <li>A - slide left</li>
+            <li>D - slide right</li>
+            <li>Q - Rotate Left</li>
+            <li>E - Rotate Right</li>
+            <li>Z - Look up</li>
+            <li>X - Look down</li>
+            <li>C - Elevate</li>
+            <li>V - Descend</li>
+        </ul>
+    </div>
+    <div>fps: <span id="fps"></span></div>
+    <div align="center" style="margin:auto;width:100%;">
+        <canvas id="gl-canvas" width="1280" height="768">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    </div>
+</body>
+
+</html>
