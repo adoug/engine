@@ -4,24 +4,26 @@
 
 */
 
+const MV = require('../common/MV');
+
 var WebGLRenderer = (function()
 {
     // private
-    var renderer_instance;
-    var renderer;
-    var canvas;
-    var program;
-    var data;
-    var near = 1.0;
-    var far = 1000;
-    var fovy = 27.0;
-    var aspect;
-    var worldview;
-    var modelview;
-    var projection;
-    var projLoc;
-    var updateCallback;
-    const up = vec3(0.0, 0.0, 1.0); // VUP along world vertical
+    let renderer_instance;
+    let renderer;
+    let canvas;
+    let program;
+    let data;
+    let near = 1.0;
+    let far = 1000;
+    let fovy = 27.0;
+    let aspect;
+    let worldview;
+    let modelview;
+    let projection;
+    let projLoc;
+    let updateCallback;
+    let up = MV.vec3(0.0, 0.0, 1.0); // VUP along world vertical
 
     var worldObjects = [];
 
@@ -70,24 +72,23 @@ var WebGLRenderer = (function()
 
         bufferId = renderer.createBuffer();
         renderer.bindBuffer(renderer.ARRAY_BUFFER, bufferId);
-        renderer.bufferData(renderer.ARRAY_BUFFER, sizeof['vec3'] * bufferSize, renderer.STATIC_DRAW);
+        renderer.bufferData(renderer.ARRAY_BUFFER, MV._sizeof('vec3') * bufferSize, renderer.STATIC_DRAW);
 
-        var vPosition = renderer.getAttribLocation(program, "vPosition");
+        let vPosition = renderer.getAttribLocation(program, "vPosition");
         renderer.vertexAttribPointer(vPosition, 3, renderer.FLOAT, false, 0, 0);
         renderer.enableVertexAttribArray(vPosition);
-        var vPosition = renderer.getAttribLocation(program, "vPosition");
         renderer.vertexAttribPointer(vPosition, 3, renderer.FLOAT, false, 0, 0);
         renderer.enableVertexAttribArray(vPosition);
 
         projLoc = renderer.getUniformLocation(program, "projection");
 
-        projection = perspective(fovy, aspect, near, far);
-        renderer.uniformMatrix4fv(projLoc, false, flatten(projection));
+        projection = MV.perspective(fovy, aspect, near, far);
+        renderer.uniformMatrix4fv(projLoc, false, MV.flatten(projection));
 
         var setRenderColor = function(colour)
         {
             var u = renderer.getUniformLocation(program, "colour");
-            renderer.uniform4fv(u, flatten(colour));
+            renderer.uniform4fv(u, MV.flatten(colour));
         };
 
         var setRenderMode = function(renderMode)
@@ -121,7 +122,7 @@ var WebGLRenderer = (function()
         {
             renderer.clear(renderer.COLOR_BUFFER_BIT | renderer.DEPTH_BUFFER_BIT);
 
-            worldview = lookAt(eye, at, up);
+            worldview = MV.lookAt(this.eye, this.at, up);
 
             for (var i = 0; i < worldObjects.length; i++)
             {
@@ -133,112 +134,112 @@ var WebGLRenderer = (function()
 
         var tiltUp = function()
         {
-            at = add(at, vec3(0.0, 0.0, 1.5));
+            this.at = MV.add(this.at, MV.vec3(0.0, 0.0, 1.5));
         };
 
         var climb = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
-            var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            at = add(at, vec3(0.0, 0.0, 0.5));
-            eye = add(eye, vec3(0.0, 0.0, 0.5));
+            var forev = MV.subtract(this.at, this.eye); // current view forward vector
+            var foreLen = MV.length(forev); // current view forward vector length
+            var fore = MV.normalize(forev); // current view forward direction
+            this.at = MV.add(this.at, MV.vec3(0.0, 0.0, 0.5));
+            this.eye = MV.add(this.eye, MV.vec3(0.0, 0.0, 0.5));
         };
 
         var descend = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
-            var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            at = add(at, vec3(0.0, 0.0, -0.5));
-            eye = add(eye, vec3(0.0, 0.0, -0.5));
-        }
+            // var forev = MV.subtract(this.at, this.eye); // current view forward vector
+            // var foreLen = MV.length(forev); // current view forward vector length
+            // var fore = MV.normalize(forev); // current view forward direction
+            this.at = MV.add(this.at, MV.vec3(0.0, 0.0, -0.5));
+            this.eye = MV.add(this.eye, MV.vec3(0.0, 0.0, -0.5));
+        };
 
         var tiltDown = function()
         {
-            at = add(at, vec3(0.0, 0.0, -1.5));
+            at = add(at, MV.vec3(0.0, 0.0, -1.5));
         };
 
         var slideForward = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
+            var forev = MV.subtract(at, eye); // current view forward vector
             var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            at = add(at, fore);
-            eye = add(eye, fore);
+            var fore = MV.normalize(forev); // current view forward direction
+            this.at = add(at, fore);
+            this.eye = add(this.eye, fore);
         };
 
         var slideBackward = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
-            var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            at = subtract(at, fore);
-            eye = subtract(eye, fore);
+            var forev = MV.subtract(this.at, this.eye); // current view forward vector
+            //var foreLen = MV.length(forev); // current view forward vector length
+            var fore = MV.normalize(forev); // current view forward direction
+            this.at = MV.subtract(this.at, fore);
+            this.eye = MV.subtract(this.eye, fore);
         }
 
         var slideLeft = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
-            var fore = normalize(forev); // current view forward direction
-            var right = normalize(cross(fore, up)); // current horizontal right direction
-            at = subtract(at, right);
-            eye = subtract(eye, right);
+            var forev = MV.subtract(this.at, this.eye); // current view forward vector
+            var fore = MV.normalize(forev); // current view forward direction
+            var right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+            this.at = MV.subtract(this.at, right);
+            this.eye = MV.subtract(this.eye, right);
         };
 
         var slideRight = function()
         {
-            var forev = subtract(at, eye); // current view forward vector
-            var fore = normalize(forev); // current view forward direction
-            var right = normalize(cross(fore, up)); // current horizontal right direction
-            at = add(at, right);
-            eye = add(eye, right);
+            var forev = MV.subtract(at, eye); // current view forward vector
+            var fore = MV.normalize(forev); // current view forward direction
+            var right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+            this.at = add(at, right);
+            this.eye = add(eye, right);
         };
 
-        var pivotLeft = function()
+        let pivotLeft = function()
         {
-            var dat;
-            var forev = subtract(at, eye); // current view forward vector
-            var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            var right = normalize(cross(fore, up)); // current horizontal right direction
-            var ddir = 1.0 * Math.PI / 180.0; // incremental view anrenderere change
-            dat = subtract(scale(foreLen * (Math.cos(ddir) - 1.0), fore), scale(foreLen * Math.sin(ddir), right));
-            at = add(at, dat);
+            let dat;
+            let forev = MV.subtract(this.at, this.eye); // current view forward vector
+            let foreLen = length(forev); // current view forward vector length
+            let fore = MV.normalize(forev); // current view forward direction
+            let right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+            let ddir = 1.0 * Math.PI / 180.0; // incremental view anrenderere change
+            dat = MV.subtract(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
+            this.at = add(at, dat);
         };
 
-        var pivotRight = function()
+        let pivotRight = function()
         {
-            var dat;
-            var forev = subtract(at, eye); // current view forward vector
-            var foreLen = length(forev); // current view forward vector length
-            var fore = normalize(forev); // current view forward direction
-            var right = normalize(cross(fore, up)); // current horizontal right direction
-            var ddir = 1.0 * Math.PI / 180.0; // incremental view angle change
-            dat = add(scale(foreLen * (Math.cos(ddir) - 1.0), fore), scale(foreLen * Math.sin(ddir), right));
-            at = add(at, dat);
+            let dat;
+            let forev = MV.subtract(this.at, this.eye); // current view forward vector
+            let foreLen = MV.length(forev); // current view forward vector length
+            let fore = MV.normalize(forev); // current view forward direction
+            let right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+            let ddir = 1.0 * Math.PI / 180.0; // incremental view angle change
+            dat = MV.add(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
+            this.at = MV.add(this.at, dat);
         };
 
-        var addSubdata = function(data)
+        let addSubdata = function(data)
         {
-            renderer.bufferSubData(renderer.ARRAY_BUFFER, currentOffset, flatten(data));
-            var prevDataLength = dataLength;
+            renderer.bufferSubData(renderer.ARRAY_BUFFER, currentOffset, MV.flatten(data));
+            let prevDataLength = dataLength;
             dataLength = dataLength + data.length;
-            currentOffset = currentOffset + (data.length * sizeof['vec3']);
+            currentOffset = currentOffset + (data.length * MV._sizeof('vec3'));
             return prevDataLength;
         };
 
-        var setViewPort = function(width, height)
+        let setViewPort = function(width, height)
         {
             renderer.viewport(0, 0, width, height);
         };
 
-        var setColor = function(r, g, b, a)
+        let setColor = function(r, g, b, a)
         {
             renderer.clearColor(r, g, b, a);
         };
 
-        var onClick = function(callback)
+        let onClick = function(callback)
         {
             if (callback && typeof callback != "undefined")
             {
@@ -249,20 +250,20 @@ var WebGLRenderer = (function()
             }
         };
 
-        var onKey = function(callback)
+        let onKey = function(callback)
         {
             if (callback && typeof callback != "undefined")
             {
                 document.addEventListener('keydown', function(event)
                 {
-                    var key = String.fromCharCode(event.keyCode);
+                    let key = String.fromCharCode(event.keyCode);
                     callback(key);
                 });
             }
         };
 
 
-        var getCurrentRenderMode = function()
+        let getCurrentRenderMode = function()
         {
             switch (renderMode)
             {
@@ -278,23 +279,23 @@ var WebGLRenderer = (function()
             }
         };
 
-        var addWorldObject = function(object)
+        let addWorldObject = function(object)
         {
             worldObjects.push(object);
-        }
+        };
 
-        var getWorldObjects = function()
+        let getWorldObjects = function()
         {
             return worldObjects;
         };
 
-        var setCamera = function(location, direction)
+        let setCamera = function(location, direction)
         {
-            eye = location;
-            at = direction;
+            this.eye = location;
+            this.at = direction;
         };
 
-        var getFps = function()
+        let getFps = function()
         {
             return fps;
         };
@@ -339,3 +340,6 @@ var WebGLRenderer = (function()
         }
     };
 })();
+
+
+module.exports = WebGLRenderer;

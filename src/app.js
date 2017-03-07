@@ -5,23 +5,28 @@
     main application
 
 */
+const WebGLRenderer = require('./WebGLRenderer');
+const MV = require('../common/MV');
+const Scene = require('./Scene');
+const SceneObject = require('./SceneObj');
+const Pyramid = require('./Pyramid');
+const Block = require('./Block');
 
-var App = (function()
-{
-    window.onload = function init()
-    {
+
+var App = {
+    init: function() {
         // Init WebGL
-        var canvasElement;
+        let canvasElement;
         canvasElement = document.getElementById('gl-canvas');        
 
-        var gl = WebGLRenderer.getInstance(canvasElement);
+        const gl = WebGLRenderer.getInstance(canvasElement);
 
         gl.setViewPort(canvasElement.width, canvasElement.height);
         gl.setColor(0.6, 0.8, 1.0, 1.0);
 
         // Setup camera
-        var eye = vec3(0.0, -300, 100.0);
-        var at = vec3(0.0, 100.0, 25.0);
+        let eye = MV.vec3(0.0, -300, 100.0);
+        let at = MV.vec3(0.0, 100.0, 25.0);
         gl.setCamera(eye, at);
 
         addGround();
@@ -32,7 +37,7 @@ var App = (function()
         addObjModel("Assets/Models/cube.obj");
 
         // Keboard camera control
-        var keyDownEventHandler = function(key)
+        let keyDownEventHandler = function(key)
         {
             switch (key)
             {
@@ -71,9 +76,9 @@ var App = (function()
             }
         };
 
-        var updateCallback = function(fps)
+        let updateCallback = function(fps)
         {
-            var fpsElement = document.getElementById("fps");
+            let fpsElement = document.getElementById("fps");
             fpsElement.innerHTML = fps.toFixed(2);
         };
 
@@ -84,126 +89,128 @@ var App = (function()
         
 
         // TODO: Sceen to 3d location
-        var addBlock = function(event)
+        let addBlock = function(event)
         {
-            var block = new Block(vec3(event.offsetX, event.offsetY, 2.05), 0, vec3(5.0, 5.0, 5.0));
-            block.setModelColour(grey);
+            let block = new Block(MV.vec3(event.offsetX, event.offsetY, 2.05), 0, MV.vec3(5.0, 5.0, 5.0));
+            block.setModelColour(Scene.grey);
             gl.addWorldObject(block);
         };
 
         function addGround()
         {
-            var ground = new Plane(vec3(0.0, 0.0, 0.0), 0, vec3(1000, 10000, 1.0));
-            ground.setModelColour(green0);
+            let ground = new Plane(MV.vec3(0.0, 0.0, 0.0), 0, MV.vec3(1000, 10000, 1.0));
+            ground.setModelColour(Scene.green0);
             gl.addWorldObject(ground);
-        };
+        }
 
         function addHuts()
         {
-            var block = new Block(vec3(20.0, 15.0, 2.05), 0, vec3(5.0, 5.0, 5.0));
-            var myPyramid = new Pyramid(vec3(20.0, 15.0, 0.0), 0, vec3(8.0, 8.0, 8.0));
-            myPyramid.setModelColour(pale);
-            block.setModelColour(grey);
+            let block = new Block(MV.vec3(20.0, 15.0, 2.05), 0, MV.vec3(5.0, 5.0, 5.0));
+            let myPyramid = new Pyramid(MV.vec3(20.0, 15.0, 0.0), 0, MV.vec3(8.0, 8.0, 8.0));
+            myPyramid.setModelColour(Scene.pale);
+            block.setModelColour(Scene.grey);
             gl.addWorldObject(myPyramid);
             gl.addWorldObject(block);
 
-            var block2 = new Block(vec3(-20.0, -15.0, 2.05), 0, vec3(5.0, 5.0, 5.0));
-            var myPyramid2 = new Pyramid(vec3(-20.0, -15.0, 0.0), 0, vec3(8.0, 8.0, 8.0));
-            myPyramid2.setModelColour(pale);
-            block2.setModelColour(grey);
+            let block2 = new Block(MV.vec3(-20.0, -15.0, 2.05), 0, MV.vec3(5.0, 5.0, 5.0));
+            let myPyramid2 = new Pyramid(MV.vec3(-20.0, -15.0, 0.0), 0, MV.vec3(8.0, 8.0, 8.0));
+            myPyramid2.setModelColour(Scene.pale);
+            block2.setModelColour(Scene.grey);
             gl.addWorldObject(myPyramid2);
             gl.addWorldObject(block2);
         }
 
         function addPath()
         {
-            var myPath1 = new Plane(vec3(0.0, 0.0, 0.0), 0, vec3(1000.0, 10.0, 1.1));
-            var myPath2 = new Plane(vec3(0.0, 0.0, 0.0), 0, vec3(10.0, 1000.0, 1.1));
-            myPath1.setModelColour(road);
-            myPath2.setModelColour(road);
+            let myPath1 = new Plane(MV.vec3(0.0, 0.0, 0.0), 0, MV.vec3(1000.0, 10.0, 1.1));
+            let myPath2 = new Plane(MV.vec3(0.0, 0.0, 0.0), 0, MV.vec3(10.0, 1000.0, 1.1));
+            myPath1.setModelColour(Scene.road);
+            myPath2.setModelColour(Scene.road);
             gl.addWorldObject(myPath1);
             gl.addWorldObject(myPath2);
         };
 
         function addTrees()
         {
-            for (var i = 2; i < 10; i++)
+            for (let i = 2; i < 10; i++)
             {
-                var x = (i * 20);
-                for (var j = 1; j < 10; j++)
+                let x = (i * 20);
+                for (let j = 1; j < 10; j++)
                 {
-                    var trunkColors = shuffle(brownsIndicies);
-                    var canopyColors = shuffle(greensIndicies);
-                    var trees = shuffle(sizeIndicies);
-                    var y = (j * 20);
-                    var myCylinder = new Cylinder(vec3(x, y, 0.0), 0, treeSizes[trees[i]].trunk);
-                    var myCone = new Cone(vec3(x, y, 8.5), 0, treeSizes[trees[i]].canopy);
-                    myCone.setModelColour(greens[canopyColors[i - 2]]);
-                    myCylinder.setModelColour(browns[trunkColors[i - 2]]);
+                    let trunkColors = shuffle(Scene.brownsIndicies);
+                    let canopyColors = shuffle(Scene.greensIndicies);
+                    let trees = shuffle(Scene.sizeIndicies);
+                    let y = (j * 20);
+                    let myCylinder = new Cylinder(MV.vec3(x, y, 0.0), 0, Scene.treeSizes[trees[i]].trunk);
+                    let myCone = new Cone(MV.vec3(x, y, 8.5), 0, Scene.treeSizes[trees[i]].canopy);
+                    myCone.setModelColour(Scene.greens[canopyColors[i - 2]]);
+                    myCylinder.setModelColour(Scene.browns[trunkColors[i - 2]]);
                     gl.addWorldObject(myCylinder);
                     gl.addWorldObject(myCone);
                 }
             }
 
-            for (var i = 2; i < 10; i++)
+            for (let i = 2; i < 10; i++)
             {
-                var x = (i * -20);
-                for (var j = 1; j < 10; j++)
+                let x = (i * -20);
+                for (let j = 1; j < 10; j++)
                 {
-                    var trunkColors = shuffle(brownsIndicies);
-                    var canopyColors = shuffle(greensIndicies);
-                    var trees = shuffle(sizeIndicies);
-                    var y = (j * -20);
-                    var myCylinder = new Cylinder(vec3(x, y, 0.0), 0, treeSizes[trees[i]].trunk);
-                    var myCone = new Cone(vec3(x, y, 8.5), 0, treeSizes[trees[i]].canopy);
-                    myCone.setModelColour(greens[canopyColors[i - 2]]);
-                    myCylinder.setModelColour(browns[trunkColors[i - 2]]);
+                    let trunkColors = shuffle(Scene.brownsIndicies);
+                    let canopyColors = shuffle(Scene.greensIndicies);
+                    let trees = shuffle(Scene.sizeIndicies);
+                    let y = (j * -20);
+                    let myCylinder = new Cylinder(MV.vec3(x, y, 0.0), 0, Scene.treeSizes[trees[i]].trunk);
+                    let myCone = new Cone(MV.vec3(x, y, 8.5), 0, Scene.treeSizes[trees[i]].canopy);
+                    myCone.setModelColour(Scene.greens[canopyColors[i - 2]]);
+                    myCylinder.setModelColour(Scene.browns[trunkColors[i - 2]]);
                     gl.addWorldObject(myCylinder);
                     gl.addWorldObject(myCone);
                 }
             }
 
-            for (var i = 2; i < 10; i++)
+            for (let i = 2; i < 10; i++)
             {
-                var x = (i * 20);
-                for (var j = 1; j < 10; j++)
+                let x = (i * 20);
+                for (let j = 1; j < 10; j++)
                 {
-                    var trunkColors = shuffle(brownsIndicies);
-                    var canopyColors = shuffle(greensIndicies);
-                    var trees = shuffle(sizeIndicies);
-                    var y = (j * -20);
-                    var myCylinder = new Cylinder(vec3(x, y, 0.0), 0, treeSizes[trees[i]].trunk);
-                    var myCone = new Cone(vec3(x, y, 8.5), 0, treeSizes[trees[i]].canopy);
-                    myCone.setModelColour(greens[canopyColors[i - 2]]);
-                    myCylinder.setModelColour(browns[trunkColors[i - 2]]);
+                    let trunkColors = shuffle(Scene.brownsIndicies);
+                    let canopyColors = shuffle(Scene.greensIndicies);
+                    let trees = shuffle(Scene.sizeIndicies);
+                    let y = (j * -20);
+                    let myCylinder = new Cylinder(MV.vec3(x, y, 0.0), 0, Scene.treeSizes[trees[i]].trunk);
+                    let myCone = new Cone(MV.vec3(x, y, 8.5), 0, Scene.treeSizes[trees[i]].canopy);
+                    myCone.setModelColour(Scene.greens[canopyColors[i - 2]]);
+                    myCylinder.setModelColour(Scene.browns[trunkColors[i - 2]]);
                     gl.addWorldObject(myCylinder);
                     gl.addWorldObject(myCone);
                 }
             }
 
-            for (var i = 2; i < 10; i++)
+            for (let i = 2; i < 10; i++)
             {
-                var x = (i * -20);
-                for (var j = 1; j < 10; j++)
+                let x = (i * -20);
+                for (let j = 1; j < 10; j++)
                 {
-                    var trunkColors = shuffle(brownsIndicies);
-                    var canopyColors = shuffle(greensIndicies);
-                    var trees = shuffle(sizeIndicies);
-                    var y = (j * 20);
-                    var myCylinder = new Cylinder(vec3(x, y, 0.0), 0, treeSizes[trees[i]].trunk);
-                    var myCone = new Cone(vec3(x, y, 8.5), 0, treeSizes[trees[i]].canopy);
-                    myCone.setModelColour(greens[canopyColors[i - 2]]);
-                    myCylinder.setModelColour(browns[trunkColors[i - 2]]);
+                    let trunkColors = shuffle(Scene.brownsIndicies);
+                    let canopyColors = shuffle(Scene.greensIndicies);
+                    let trees = shuffle(Scene.sizeIndicies);
+                    let y = (j * 20);
+                    let myCylinder = new Cylinder(MV.vec3(x, y, 0.0), 0, Scene.treeSizes[trees[i]].trunk);
+                    let myCone = new Cone(MV.vec3(x, y, 8.5), 0, Scene.treeSizes[trees[i]].canopy);
+                    myCone.setModelColour(Scene.greens[canopyColors[i - 2]]);
+                    myCylinder.setModelColour(Scene.browns[trunkColors[i - 2]]);
                     gl.addWorldObject(myCylinder);
                     gl.addWorldObject(myCone);
                 }
             }
-        };
+        }
 
         function addObjModel(path) {
-            var sceneObj = new SceneObj(vec3(10.0, 30.0, 2.05), 0, vec3(5.0, 5.0, 5.0), path);
-            sceneObj.setModelColour(red);
+            let sceneObj = new SceneObject(MV.vec3(10.0, 30.0, 2.05), 0, MV.vec3(5.0, 5.0, 5.0), path);
+            sceneObj.setModelColour(Scene.red);
             gl.addWorldObject(sceneObj);
         }
     }
-})();
+};
+
+module.exports = App;

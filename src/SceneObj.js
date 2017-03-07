@@ -1,64 +1,69 @@
-SceneObj.offset = this.offset;
-SceneObj.vertices = [];
+const WebGLRenderer = require('./WebGLRenderer');
+const MV = require('../common/MV');
 
-function SceneObj(location, angle, scales, path)
-{
-    var gl = WebGLRenderer.getInstance();
-    this.location = location;
-    this.angle = angle;
-    this.scales = scales;
-    this.color = vec4(0.8, 0.7, 0.3, 1.0);
-    if (SceneObj.vertices.length == 0)
+class SceneObject {
+
+    constructor(location, angle, scales, path, offset)
     {
-        SceneObj.vertices = SceneObj.initModel(path);
-        this.offset = gl.addSubdata(SceneObj.vertices);
+        this.offset = offset;
+        this.vertices = [];
+        this.NV = 0;
+        const gl = WebGLRenderer.getInstance();
+        this.location = location;
+        this.angle = angle;
+        this.scales = scales;
+        this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
+        if (this.vertices.length == 0)
+        {
+            this.vertices = this.initModel(path);
+            this.offset = gl.addSubdata(this.vertices);
+        }
+    }
+
+    render (worldview, gl, program)
+    {
+        let colLoc = gl.getUniformLocation(program, "colour");
+        let mvLoc = gl.getUniformLocation(program, "modelView");
+        gl.uniform4fv(colLoc, MV.flatten(this.color));
+        gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+        gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
+    }
+
+    initModel (modelPath)
+    {
+        let cubeObjModel = new ObjParser(modelPath);
+
+        this.vertices = cubeObjModel.vertexPositions;
+
+        this.NV = cubeObjModel.vertexPositions.length;
+        return cubeObjModel.vertexPositions;
+    }
+
+    update ()
+    {
+        let rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
+        this.trs = MV.mult(MV.translate(this.location), rs);
+    }
+
+    setModelColour (color)
+    {
+        this.color = color;
+    }
+
+    setWidth (width)
+    {
+        this.width = width;
+    }
+
+    setHeight (height)
+    {
+        this.height = height;
+    }
+
+    setLocation (location)
+    {
+        this.location = location;
     }
 }
 
-SceneObj.prototype.render = function(worldview, gl, program)
-{
-    var colLoc = gl.getUniformLocation(program, "colour");
-    var mvLoc = gl.getUniformLocation(program, "modelView");
-    gl.uniform4fv(colLoc, flatten(this.color));
-    gl.uniformMatrix4fv(mvLoc, false, flatten(mult(worldview, this.trs)));
-    gl.drawArrays(gl.TRIANGLES, this.offset, SceneObj.NV);
-};
-
-SceneObj.prototype.update = function()
-{
-    var rs = mult(rotate(this.angle, [0, 0, 1]), scalem(this.scales));
-    this.trs = mult(translate(this.location), rs);
-}
-
-SceneObj.prototype.setModelColour = function(color)
-{
-    this.color = color;
-}
-
-SceneObj.prototype.setWidth = function(width)
-{
-    this.width;
-}
-
-SceneObj.prototype.setHeight = function(height)
-{
-    this.height;
-}
-
-SceneObj.prototype.setLocation = function(location)
-{
-    this.location = location;
-}
-
-SceneObj.prototype.setAngle
-
-SceneObj.initModel = function(modelPath)
-{
-
-    var cubeObjModel = new ObjParser(modelPath);
-
-    var vertices = cubeObjModel.vertexPositions;
-
-    SceneObj.NV = cubeObjModel.vertexPositions.length;
-    return cubeObjModel.vertexPositions;
-}
+module.exports = SceneObject;

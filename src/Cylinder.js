@@ -4,6 +4,9 @@
 
 */
 
+const WebGLRenderer = require('./WebGLRenderer');
+const MV = require('../common/MV');
+
 Cylinder.vertices = [];
 
 function Cylinder(location, angle, scales)
@@ -12,7 +15,7 @@ function Cylinder(location, angle, scales)
     this.location = location;
     this.angle = angle;
     this.scales = scales;
-    this.color = vec4(0.5, 0.5, 0.5, 1.0);
+    this.color = MV.vec4(0.5, 0.5, 0.5, 1.0);
     if(Cylinder.vertices.length == 0)
     {        
         Cylinder.vertices = Cylinder.initModel(); 
