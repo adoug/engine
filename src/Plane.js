@@ -4,6 +4,9 @@
 
 */
 
+const WebGLRenderer = require('./WebGLRenderer');
+const MV = require('../common/MV');
+
 Plane.offset = this.offset;
 Plane.vertices = [];
 
@@ -13,7 +16,7 @@ function Plane(location, angle, scales)
     this.location = location;
     this.angle = angle;
     this.scales = scales;
-    this.color = vec4(0.8, 0.7, 0.3, 1.0);
+    this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
     if (Plane.vertices.length == 0)
     {
         Plane.vertices = Plane.initModel();

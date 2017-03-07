@@ -4,15 +4,18 @@
 
 */
 
+const WebGLRenderer = require('./WebGLRenderer');
+const MV = require('../common/MV');
+
 Cone.vertices = [];
 
 function Cone(location, angle, scales)
 {
-    var gl = WebGLRenderer.getInstance();
+    const gl = WebGLRenderer.getInstance();
     this.location = location;
     this.angle = angle;
     this.scales = scales;
-    this.color = vec4(0.5, 0.5, 0.5, 1.0);
+    this.color = MV.vec4(0.5, 0.5, 0.5, 1.0);
     if (Cone.vertices.length == 0)
     {
         Cone.vertices = Cone.initModel();
