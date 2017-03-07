@@ -1,2 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 *.log
+/node_modules
+/dist
+*.xml
+*.iml
