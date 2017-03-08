@@ -7,7 +7,7 @@
 
 */
 
-const MV = require('../common/MV');
+import MV from '../common/MV';
 
 const Scene = {
     green0: MV.vec4(0.0, 0.8, 0.2, 1.0),
@@ -140,6 +140,6 @@ const Scene = {
     rownsIndicies: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 };
 
-module.exports = Scene;
+export { Scene as default }
 
 

@@ -3,12 +3,12 @@
     Student No: 11362345
 
 */
-const WebGLRenderer = require('./WebGLRenderer');
-const MV = require('../common/MV');
+import WebGLRenderer from './WebGLRenderer';
+import MV from '../common/MV';
 
 class Pyramid {
     constructor(location, angle, scales) {
-        const gl = WebGLRenderer.getInstance();
+        this.gl = WebGLRenderer.getInstance();
         this.vertices = [];
         this.location = location;
         this.angle = angle;
@@ -17,7 +17,7 @@ class Pyramid {
         if (this.vertices.length == 0)
         {
             this.vertices = this.initModel();
-            this.offset = gl.addSubdata(this.vertices);
+            this.offset = this.gl.addSubdata(this.vertices);
         }
     }
 
@@ -29,14 +29,12 @@ class Pyramid {
         gl.drawArrays(gl.TRIANGLES, Pyramid.offset, this.NV);
     }
 
-    update ()
-    {
+    update () {
         let rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
         this.trs = MV.mult(MV.translate(this.location), rs);
     }
 
-    doPyramid()
-    {
+    doPyramid() {
         for (let i = 0; i < this.indices.length; ++i)
         {
             this.vertices.push(this.rawverts[this.indices[i]]);
@@ -44,8 +42,7 @@ class Pyramid {
     }
 
 
-    initModel ()
-    {
+    initModel() {
         // The 5 raw vertices of a pyramid
         this.rawverts = [
             MV.vec3(-0.5, -0.5, 0.5),
@@ -62,27 +59,23 @@ class Pyramid {
         return this.vertices;
     }
 
-    setModelColour (color)
-    {
+    setModelColour (color) {
         this.color = color;
     }
 
-    setWidth (width)
-    {
+    setWidth (width) {
         this.width = width;
     }
 
-    setHeight (height)
-    {
+    setHeight (height) {
         this.height = height;
     }
 
-    setLocation (location)
-    {
+    setLocation (location) {
         this.location = location;
     }
 }
 
-module.exports = Pyramid;
+export { Pyramid as default }
 
 

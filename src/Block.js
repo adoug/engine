@@ -1,25 +1,25 @@
-const MV = require('../common/MV');
-const WebGLRenderer = require('./WebGLRenderer');
+import MV from '../common/MV';
+import WebGLRenderer from './WebGLRenderer';
 
 class Block {
   constructor(location, angle, scales) {
-    const gl = WebGLRenderer.getInstance();
+    this.gl = WebGLRenderer.getInstance();
     this.location = location;
     this.angle = angle;
     this.scales = scales;
     this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
     if (this.vertices.length === 0) {
       this.vertices = this.initModel();
-      this.offset = gl.addSubdata(this.vertices);
+      this.offset = this.gl.addSubdata(this.vertices);
     }
   }
 
   render(worldview, gl, program) {
     const colLoc = gl.getUniformLocation(program, 'colour');
     const mvLoc = gl.getUniformLocation(program, 'modelView');
-    gl.uniform4fv(colLoc, MV.flatten(this.color));
-    gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
+    this.gl.uniform4fv(colLoc, MV.flatten(this.color));
+    this.gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+    this.gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   update() {
@@ -72,7 +72,13 @@ class Block {
     this.NV = vertices.length;
     return vertices;
   }
+
+  static getNumberOfVertices() {
+    return this.NV;
+  }
 }
 
-module.exports = Block;
+Block.NV = Block.getNumberOfVertices();
+
+export { Block as default }
 

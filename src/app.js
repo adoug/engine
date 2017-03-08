@@ -5,13 +5,12 @@
     main application
 
 */
-const WebGLRenderer = require('./WebGLRenderer');
-const MV = require('../common/MV');
-const Scene = require('./Scene');
-const SceneObject = require('./SceneObj');
-const Pyramid = require('./Pyramid');
-const Block = require('./Block');
-
+import WebGLRenderer from './WebGLRenderer';
+import MV from '../common/MV';
+import Scene from './Scene';
+import SceneObject from './SceneObj';
+import Pyramid from './Pyramid';
+import Block from './Block';
 
 const App = {
   init() {
