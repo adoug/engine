@@ -88,6 +88,10 @@ const Scene = {
       canopy: MV.vec3(7.0, 7.0, 10.0),
     },
     {
+      trunk: MV.vec3(1.5, 1.5, 1.5),
+      canopy: MV.vec3(7.0, 7.0, 10.0),
+    },
+    {
       trunk: MV.vec3(2.0, 2.0, 2.0),
       canopy: MV.vec3(8.0, 8.0, 12.0),
     }],
@@ -110,15 +114,12 @@ const Scene = {
     this.green6,
     this.green7,
     this.green1,
+    this.green0
   ],
 
-  greensIndicies: [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-  ],
+  greensIndicies: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
 
-  brownsIndicies: [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-  ],
+  brownsIndicies: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
 
   browns: [
     this.brown0,
@@ -136,8 +137,8 @@ const Scene = {
     this.brown0,
     this.brown1,
     this.brown2,
-  ],
-  rownsIndicies: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    this.brown0],
+  rownsIndicies: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 };
 
 export { Scene as default };

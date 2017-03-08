@@ -1,10 +1,14 @@
+/*
+ Author:     Andrew Douglas
+ Student No: 11362345
+
+ */
+
 import MV from '../common/MV';
 import WebGLRenderer from './WebGLRenderer';
 
 class Block {
-  constructor(location, angle, scales) {
-    this.gl = new WebGLRenderer('gl-canvas');
-
+  constructor(location, angle, scales, gl) {
     this.location = location;
     this.angle = angle;
     this.scales = scales;
@@ -12,16 +16,16 @@ class Block {
     this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
     if (this.vertices.length === 0) {
       this.vertices = this.initModel();
-      this.offset = this.gl.addSubdata(this.vertices);
+      this.offset = gl.addSubdata(this.vertices);
     }
   }
 
   render(worldview, gl, program) {
     const colLoc = gl.getUniformLocation(program, 'colour');
     const mvLoc = gl.getUniformLocation(program, 'modelView');
-    this.gl.renderer.uniform4fv(colLoc, MV.flatten(this.color));
-    this.gl.renderer.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    this.gl.renderer.drawArrays(gl.TRIANGLES, this.offset, this.NV);
+    gl.uniform4fv(colLoc, MV.flatten(this.color));
+    gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+    gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   update() {

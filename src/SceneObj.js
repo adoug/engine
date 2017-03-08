@@ -1,13 +1,11 @@
-import WebGLRenderer from './WebGLRenderer';
 import MV from '../common/MV';
 import ObjParser from './ObjParser';
 
 class SceneObject {
-  constructor(location, angle, scales, path, offset) {
-    this.offset = offset;
+  constructor(location, angle, scales, path, gl) {
     this.vertices = [];
     this.NV = 0;
-    this.gl = WebGLRenderer.getInstance();
+    this.gl = gl;
     this.location = location;
     this.angle = angle;
     this.scales = scales;

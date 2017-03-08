@@ -3,6 +3,7 @@
     Student No: 11362345
 
 */
+
 import WebGLRenderer from './WebGLRenderer';
 import MV from '../common/MV';
 
@@ -23,9 +24,9 @@ class Pyramid {
   render(worldview, gl, program) {
     const colLoc = gl.getUniformLocation(program, 'colour');
     const mvLoc = gl.getUniformLocation(program, 'modelView');
-    this.gl.renderer.uniform4fv(colLoc, MV.flatten(this.color));
-    this.gl.renderer.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    this.gl.renderer.drawArrays(gl.TRIANGLES, Pyramid.offset, this.NV);
+    gl.uniform4fv(colLoc, MV.flatten(this.color));
+    gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+    gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   update() {

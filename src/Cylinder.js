@@ -9,16 +9,15 @@ import MV from '../common/MV';
 
 class Cylinder {
   constructor(location, angle, scales) {
-    this.gl = WebGLRenderer.getInstance();
+    this.gl = new WebGLRenderer('gl-canvas');
     this.location = location;
     this.angle = angle;
     this.scales = scales;
     this.vertices = [];
     this.color = MV.vec4(0.5, 0.5, 0.5, 1.0);
     if (this.vertices.length === 0) {
-      this.vertices = Cylinder.initModel();
+      this.vertices = this.initModel();
       this.offset = this.gl.addSubdata(this.vertices);
-      this.offset = this.offset;
     }
   }
 
@@ -32,10 +31,11 @@ class Cylinder {
     const mvLoc = gl.getUniformLocation(program, 'modelView');
     gl.uniform4fv(colLoc, MV.flatten(this.color));
     gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    gl.drawArrays(gl.TRIANGLE_STRIP, Cylinder.offset, Cylinder.NV);
+    gl.drawArrays(gl.TRIANGLE_STRIP, this.offset, this.NV);
   }
 
   setModelColour(color) {
+    console.log(color);
     this.color = color;
   }
 
@@ -51,7 +51,7 @@ class Cylinder {
     this.location = location;
   }
 
-  static initModel() {
+  initModel() {
     let baseVerts = [];
     let topVerts = [];
 
@@ -84,11 +84,9 @@ class Cylinder {
     }
 
     doCylinder();
-    Cylinder.NV = vertices.length;
+    this.NV = vertices.length;
     return vertices;
   }
 }
 
 export { Cylinder as default };
-
-

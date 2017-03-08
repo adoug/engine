@@ -17,7 +17,7 @@ class WebGLRenderer {
       this.near = 1.0;
       this.far = 1000;
       this.fovy = 27.0;
-      this.bufferSize = 10000;
+      this.bufferSize = 1000000;
       this.currentOffset = 0;
       this.dataLength = 0;
       this.then = Date.now() / 1000;
