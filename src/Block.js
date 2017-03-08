@@ -7,6 +7,7 @@ class Block {
     this.location = location;
     this.angle = angle;
     this.scales = scales;
+    this.vertices = [];
     this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
     if (this.vertices.length === 0) {
       this.vertices = this.initModel();

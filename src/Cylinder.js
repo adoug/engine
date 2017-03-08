@@ -13,12 +13,12 @@ class Cylinder {
     this.location = location;
     this.angle = angle;
     this.scales = scales;
+    this.vertices = [];
     this.color = MV.vec4(0.5, 0.5, 0.5, 1.0);
-    if(Cylinder.vertices.length === 0)
-    {
-      Cylinder.vertices = Cylinder.initModel();
-      this.offset = this.gl.addSubdata(Cylinder.vertices);
-      Cylinder.offset = this.offset;
+    if (this.vertices.length === 0) {
+      this.vertices = Cylinder.initModel();
+      this.offset = this.gl.addSubdata(this.vertices);
+      this.offset = this.offset;
     }
   }
 
@@ -51,7 +51,7 @@ class Cylinder {
     this.location = location;
   }
 
-  initModel() {
+  static initModel() {
     let baseVerts = [];
     let topVerts = [];
 
@@ -61,8 +61,8 @@ class Cylinder {
       let bottom = 0.0;
       let top = 10.0;
 
-      for (let i = 0; i <= 180; i++) {
-        let theta = (Math.PI / 180) * (2 * i + 0.5);
+      for (let i = 0; i <= 180; i += 1) {
+        let theta = (Math.PI / 180) * ((2 * i) + 0.5);
         let b = MV.vec3(Math.cos(theta), Math.sin(theta), bottom);
         let t = MV.vec3(Math.cos(theta), Math.sin(theta), top);
         baseVerts.push(b);
