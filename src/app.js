@@ -18,7 +18,7 @@ import Utils from './utils';
 
 class App {
   constructor(canvasElement) {
-    this.gl = WebGLRenderer.getInstance(canvasElement);
+    this.gl = new WebGLRenderer(canvasElement);
     this.gl.setViewPort(canvasElement.width, canvasElement.height);
     this.gl.setColor(0.6, 0.8, 1.0, 1.0);
 
@@ -139,13 +139,18 @@ class App {
     this.gl.addWorldObject(sceneObj);
   }
 
+  updateCallback(fps) {
+    const fpsElement = document.getElementById('fps');
+    fpsElement.innerHTML = fps.toFixed(2);
+  }
+
   init() {
     this.addGround();
     this.addHuts();
     this.addPath();
-    this.addTrees();
+    // this.addTrees();
 
-    this.addObjModel('Assets/Models/cube.obj');
+    // this.addObjModel('Assets/Models/cube.obj');
 
     // Keboard camera control
     const keyDownEventHandler = function eventHandler(key) {
@@ -185,20 +190,14 @@ class App {
       }
     };
 
-    const updateCallback = function (fps) {
-      const fpsElement = document.getElementById('fps');
-      fpsElement.innerHTML = fps.toFixed(2);
-    };
-
-    this.gl.onClick(this.addBlock);
-    this.gl.onKey(keyDownEventHandler);
-    this.gl.onUpdate(updateCallback);
+    this.gl.onClick(this.addBlock.bind(this));
+    this.gl.onKey(keyDownEventHandler.bind(this));
+    this.gl.onUpdate(this.updateCallback);
     this.gl.render();
   }
 }
 
 window.onload = function () {
-  console.log('onload');
   const app = new App(document.getElementById('gl-canvas'));
   app.init();
 };

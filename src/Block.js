@@ -3,7 +3,8 @@ import WebGLRenderer from './WebGLRenderer';
 
 class Block {
   constructor(location, angle, scales) {
-    this.gl = WebGLRenderer.getInstance();
+    this.gl = new WebGLRenderer('gl-canvas');
+
     this.location = location;
     this.angle = angle;
     this.scales = scales;
@@ -18,9 +19,9 @@ class Block {
   render(worldview, gl, program) {
     const colLoc = gl.getUniformLocation(program, 'colour');
     const mvLoc = gl.getUniformLocation(program, 'modelView');
-    this.gl.uniform4fv(colLoc, MV.flatten(this.color));
-    this.gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    this.gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
+    this.gl.renderer.uniform4fv(colLoc, MV.flatten(this.color));
+    this.gl.renderer.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+    this.gl.renderer.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   update() {

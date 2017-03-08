@@ -9,15 +9,16 @@ import MV from '../common/MV';
 
 class Plane {
   constructor(location, angle, scales) {
-    this.gl = WebGLRenderer.getInstance();
+    this.gl = new WebGLRenderer('gl-canvas');
     this.location = location;
     this.angle = angle;
     this.scales = scales;
+    this.vertices = [];
     this.color = MV.vec4(0.8, 0.7, 0.3, 1.0);
-    if (Plane.vertices.length === 0)
-    {
-      Plane.vertices = Plane.initModel();
-      this.offset = this.gl.addSubdata(Plane.vertices);
+    if (this.vertices.length === 0) {
+      this.vertices = Plane.initModel();
+      this.NV = this.vertices.length;
+      this.offset = this.gl.addSubdata(this.vertices);
     }
   }
 
@@ -31,7 +32,7 @@ class Plane {
     let mvLoc = gl.getUniformLocation(program, 'modelView');
     gl.uniform4fv(colLoc, MV.flatten(this.color));
     gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    gl.drawArrays(gl.TRIANGLES, this.offset, Plane.NV);
+    gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   static initModel() {
@@ -44,16 +45,13 @@ class Plane {
     let vertices = [];
     let indices = [1, 0, 3, 1, 3, 2];
 
-    function doPlane()
-    {
-      for (let i = 0; i < indices.length; ++i)
-      {
+    function doPlane() {
+      for (let i = 0; i < indices.length; i += 1) {
         vertices.push(rawverts[indices[i]]);
       }
     }
 
     doPlane();
-    Plane.NV = vertices.length;
     return vertices;
   }
 
@@ -77,8 +75,5 @@ class Plane {
     this.location = location;
   }
 }
-
-Plane.offset = this.offset;
-Plane.vertices = [];
 
 export { Plane as default };

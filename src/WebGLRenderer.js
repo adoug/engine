@@ -7,61 +7,74 @@ import MV from '../common/MV';
 import WebGLUtils from '../common/webgl-utils';
 import initShaders from '../common/initShaders';
 
+let instance = null;
+
 class WebGLRenderer {
   constructor(canvasElement) {
-    this.near = 1.0;
-    this.far = 1000;
-    this.fovy = 27.0;
-    this.bufferSize = 10000;
-    this.currentOffset = 0;
-    this.dataLength = 0;
-    this.then = Date.now() / 1000;
-    this.fps = 0.0;
-    this.canvas = canvasElement;
+    if (instance) {
+      return instance;
+    } else {
+      this.near = 1.0;
+      this.far = 1000;
+      this.fovy = 27.0;
+      this.bufferSize = 10000;
+      this.currentOffset = 0;
+      this.dataLength = 0;
+      this.then = Date.now() / 1000;
+      this.fps = 0.0;
+      this.canvas = canvasElement;
+      this.updateCallback = function() {};
 
-    this.up = MV.vec3(0.0, 0.0, 1.0); // VUP along world vertical
-    this.worldObjects = [];
+      this.up = MV.vec3(0.0, 0.0, 1.0); // VUP along world vertical
+      this.eye = MV.vec3(0.0, -300, 100.0);
+      this.at = MV.vec3(0.0, 100.0, 25.0);
 
-    this.renderer = WebGLUtils.setupWebGL(canvasElement);
+      this.worldObjects = [];
 
-    if (!this.renderer) {
-      throw new Error("WebGL isn't available");
+      this.renderer = WebGLUtils.setupWebGL(canvasElement);
+      this.renderer_instance = this.renderer;
+
+      if (!this.renderer) {
+        throw new Error("WebGL isn't available");
+      }
+
+      this.renderModeTypes = {
+        TRIANGLES: this.renderer.TRIANGLES,
+        TRIANGLE_STRIP: this.renderer.TRIANGLE_STRIP,
+        TRIANGLE_FAN: this.renderer.TRIANGLE_FAN,
+        LINES: this.renderer.LINES,
+        LINE_LOOP: this.renderer.LINE_LOOP,
+        LINE_STRIP: this.renderer.LINE_STRIP,
+        POINTS: this.renderer.POINTS,
+      };
+
+      this.renderMode = this.renderModeTypes.TRIANGLE_STRIP;
+
+      this.renderer.viewport(0, 0, this.canvas.width, this.canvas.height);
+      this.aspect = this.canvas.width / this.canvas.height;
+
+      this.renderer.enable(this.renderer.DEPTH_TEST);
+
+      this.program = initShaders.initShaders(this.renderer, 'vertex-shader', 'fragment-shader');
+      this.renderer.useProgram(this.program);
+
+      this.bufferId = this.renderer.createBuffer();
+      this.renderer.bindBuffer(this.renderer.ARRAY_BUFFER, this.bufferId);
+      this.renderer.bufferData(this.renderer.ARRAY_BUFFER, MV._sizeof('vec3') * this.bufferSize, this.renderer.STATIC_DRAW);
+
+      const vPosition = this.renderer.getAttribLocation(this.program, 'vPosition');
+      this.renderer.vertexAttribPointer(vPosition, 3, this.renderer.FLOAT, false, 0, 0);
+      this.renderer.enableVertexAttribArray(vPosition);
+      this.renderer.vertexAttribPointer(vPosition, 3, this.renderer.FLOAT, false, 0, 0);
+      this.renderer.enableVertexAttribArray(vPosition);
+
+      this.projLoc = this.renderer.getUniformLocation(this.program, 'projection');
+
+      this.projection = MV.perspective(this.fovy, this.aspect, this.near, this.far);
+      this.renderer.uniformMatrix4fv(this.projLoc, false, MV.flatten(this.projection));
+      instance = this;
     }
-
-    this.renderModeTypes = {
-      TRIANGLES: this.renderer.TRIANGLES,
-      TRIANGLE_STRIP: this.renderer.TRIANGLE_STRIP,
-      TRIANGLE_FAN: this.renderer.TRIANGLE_FAN,
-      LINES: this.renderer.LINES,
-      LINE_LOOP: this.renderer.LINE_LOOP,
-      LINE_STRIP: this.renderer.LINE_STRIP,
-      POINTS: this.renderer.POINTS,
-    };
-
-    this.renderMode = this.renderModeTypes.TRIANGLE_STRIP;
-
-    this.renderer.viewport(0, 0, this.canvas.width, this.canvas.height);
-    this.aspect = this.canvas.width / this.canvas.height;
-
-    this.renderer.enable(this.renderer.DEPTH_TEST);
-
-    this.program = initShaders.initShaders(this.renderer, 'vertex-shader', 'fragment-shader');
-    this.renderer.useProgram(this.program);
-
-    this.bufferId = this.renderer.createBuffer();
-    this.renderer.bindBuffer(this.renderer.ARRAY_BUFFER, this.bufferId);
-    this.renderer.bufferData(this.renderer.ARRAY_BUFFER, MV._sizeof('vec3') * this.bufferSize, this.renderer.STATIC_DRAW);
-
-    const vPosition = this.renderer.getAttribLocation(this.program, 'vPosition');
-    this.renderer.vertexAttribPointer(vPosition, 3, this.renderer.FLOAT, false, 0, 0);
-    this.renderer.enableVertexAttribArray(vPosition);
-    this.renderer.vertexAttribPointer(vPosition, 3, this.renderer.FLOAT, false, 0, 0);
-    this.renderer.enableVertexAttribArray(vPosition);
-
-    this.projLoc = this.renderer.getUniformLocation(this.program, 'projection');
-
-    this.projection = MV.perspective(this.fovy, this.aspect, this.near, this.far);
-    this.renderer.uniformMatrix4fv(this.projLoc, false, MV.flatten(this.projection));
+    return instance;
   }
 
   setRenderColor(colour) {
@@ -79,18 +92,15 @@ class WebGLRenderer {
     }
   }
 
-
   render() {
-    console.log('render');
     this.renderer.clear(this.renderer.COLOR_BUFFER_BIT | this.renderer.DEPTH_BUFFER_BIT);
-
     this.worldview = MV.lookAt(this.eye, this.at, this.up);
 
-    for (let i = 0; i < this.worldObjects.length; i++) {
+    for (let i = 0; i < this.worldObjects.length; i += 1) {
       this.worldObjects[i].update();
       this.worldObjects[i].render(this.worldview, this.renderer, this.program);
     }
-    window.requestAnimFrame(this.update);
+    window.requestAnimFrame(this.update.bind(this));
   }
 
   update() {
@@ -104,13 +114,6 @@ class WebGLRenderer {
     // compute fps
     this.fps = 1 / elapsedTime;
     this.render();
-  }
-
-  static getInstance(canvasElement) {
-    if (!this.renderer_instance) {
-      this.renderer_instance = new WebGLRenderer(canvasElement);
-    }
-    return this.renderer_instance;
   }
 
   addWorldObject(object) {
@@ -157,7 +160,7 @@ class WebGLRenderer {
   slideLeft() {
     const forev = MV.subtract(this.at, this.eye); // current view forward vector
     const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
     this.at = MV.subtract(this.at, right);
     this.eye = MV.subtract(this.eye, right);
   }
@@ -185,7 +188,7 @@ class WebGLRenderer {
     const forev = MV.subtract(this.at, this.eye); // current view forward vector
     const foreLen = MV.length(forev); // current view forward vector length
     const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
+    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
     const ddir = (1.0 * Math.PI) / 180.0; // incremental view angle change
     const dat = MV.add(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
     this.at = MV.add(this.at, dat);

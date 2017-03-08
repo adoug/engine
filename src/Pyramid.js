@@ -8,7 +8,7 @@ import MV from '../common/MV';
 
 class Pyramid {
   constructor(location, angle, scales) {
-    this.gl = WebGLRenderer.getInstance();
+    this.gl = new WebGLRenderer('gl-canvas');
     this.vertices = [];
     this.location = location;
     this.angle = angle;
@@ -23,9 +23,9 @@ class Pyramid {
   render(worldview, gl, program) {
     const colLoc = gl.getUniformLocation(program, 'colour');
     const mvLoc = gl.getUniformLocation(program, 'modelView');
-    gl.uniform4fv(colLoc, MV.flatten(this.color));
-    gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
-    gl.drawArrays(gl.TRIANGLES, Pyramid.offset, this.NV);
+    this.gl.renderer.uniform4fv(colLoc, MV.flatten(this.color));
+    this.gl.renderer.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
+    this.gl.renderer.drawArrays(gl.TRIANGLES, Pyramid.offset, this.NV);
   }
 
   update() {
