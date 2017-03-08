@@ -14,7 +14,7 @@ class Cylinder {
     this.angle = angle;
     this.scales = scales;
     this.color = MV.vec4(0.5, 0.5, 0.5, 1.0);
-    if(Cylinder.vertices.length == 0)
+    if(Cylinder.vertices.length === 0)
     {
       Cylinder.vertices = Cylinder.initModel();
       this.offset = this.gl.addSubdata(Cylinder.vertices);
@@ -23,13 +23,13 @@ class Cylinder {
   }
 
   update() {
-    let rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
+    const rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
     this.trs = MV.mult(MV.translate(this.location), rs);
   }
 
   render(worldview, gl, program) {
-    let colLoc = gl.getUniformLocation(program, "colour");
-    let mvLoc = gl.getUniformLocation(program, "modelView");
+    const colLoc = gl.getUniformLocation(program, 'colour');
+    const mvLoc = gl.getUniformLocation(program, 'modelView');
     gl.uniform4fv(colLoc, MV.flatten(this.color));
     gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
     gl.drawArrays(gl.TRIANGLE_STRIP, Cylinder.offset, Cylinder.NV);
@@ -89,6 +89,6 @@ class Cylinder {
   }
 }
 
-export { Cylinder as default }
+export { Cylinder as default };
 
 

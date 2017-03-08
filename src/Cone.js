@@ -25,7 +25,7 @@ class Cone {
   }
 
   update() {
-    let rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
+    const rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
     this.trs = MV.mult(MV.translate(this.location), rs);
   }
 
@@ -46,23 +46,23 @@ class Cone {
   }
 
   initModel() {
-    let rawverts = [];
-    let vertices = [];
+    const rawverts = [];
+    const vertices = [];
 
     function doCone() {
-      let z = 0.0;
-      let top = MV.vec3(0.0, 0.0, 1.5);
+      const z = 0.0;
+      const top = MV.vec3(0.0, 0.0, 1.5);
 
-      for (let i = 0; i <= 180; i++) {
-        let theta = (Math.PI / 180) * (2 * i + 0.5);
-        let v = MV.vec3(Math.cos(theta), Math.sin(theta), z);
+      for (let i = 0; i <= 180; i += 1) {
+        const theta = (Math.PI / 180) * ((2 * i) + 0.5);
+        const v = MV.vec3(Math.cos(theta), Math.sin(theta), z);
         rawverts.push(v);
       }
 
       for (let j = 0; j < rawverts.length;) {
         vertices.push(rawverts[j]);
         vertices.push(top);
-        vertices.push(rawverts[j++]);
+        vertices.push(rawverts[j += 1]);
       }
     }
 
@@ -72,4 +72,4 @@ class Cone {
   }
 }
 
-export { Cone as default }
+export { Cone as default };

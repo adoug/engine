@@ -1,15 +1,21 @@
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+class Utils {
+  static shuffle(array) {
+    this.array = array;
+    let currentIndex = array.length;
+    let temporaryValue;
+    let randomIndex;
 
-  while (0 !== currentIndex) {
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
 
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+      temporaryValue = this.array[currentIndex];
+      this.array[currentIndex] = this.array[randomIndex];
+      this.array[randomIndex] = temporaryValue;
+    }
 
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
+    return this.array;
   }
-
-  return array;
 }
+
+export { Utils as default };

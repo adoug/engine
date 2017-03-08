@@ -4,6 +4,8 @@
 
 */
 import MV from '../common/MV';
+import WebGLUtils from '../common/webgl-utils';
+import initShaders from '../common/initShaders';
 
 class WebGLRenderer {
   constructor(canvasElement) {
@@ -43,8 +45,8 @@ class WebGLRenderer {
 
     this.renderer.enable(this.renderer.DEPTH_TEST);
 
-    this.program = initShaders(this.renderer, 'vertex-shader', 'fragment-shader');
-    this.renderer.useProgram(program);
+    this.program = initShaders.initShaders(this.renderer, 'vertex-shader', 'fragment-shader');
+    this.renderer.useProgram(this.program);
 
     this.bufferId = this.renderer.createBuffer();
     this.renderer.bindBuffer(this.renderer.ARRAY_BUFFER, this.bufferId);
@@ -79,6 +81,7 @@ class WebGLRenderer {
 
 
   render() {
+    console.log('render');
     this.renderer.clear(this.renderer.COLOR_BUFFER_BIT | this.renderer.DEPTH_BUFFER_BIT);
 
     this.worldview = MV.lookAt(this.eye, this.at, this.up);
@@ -87,7 +90,7 @@ class WebGLRenderer {
       this.worldObjects[i].update();
       this.worldObjects[i].render(this.worldview, this.renderer, this.program);
     }
-    requestAnimFrame(this.update);
+    window.requestAnimFrame(this.update);
   }
 
   update() {
@@ -103,7 +106,7 @@ class WebGLRenderer {
     this.render();
   }
 
-  getInstance(canvasElement) {
+  static getInstance(canvasElement) {
     if (!this.renderer_instance) {
       this.renderer_instance = new WebGLRenderer(canvasElement);
     }
@@ -168,24 +171,23 @@ class WebGLRenderer {
   }
 
   pivotLeft() {
-    let dat;
     const forev = MV.subtract(this.at, this.eye); // current view forward vector
     const foreLen = MV.length(forev); // current view forward vector length
     const fore = MV.normalize(forev); // current view forward direction
     const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
-    const ddir = 1.0 * Math.PI / 180.0; // incremental view anrenderere change
-    dat = MV.subtract(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
-    this.at = add(this.at, dat);
+    const ddir = (1.0 * Math.PI) / 180.0; // incremental view anrenderere change
+    const dat = MV.subtract(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore),
+        MV.scale(foreLen * Math.sin(ddir), right));
+    this.at = MV.add(this.at, dat);
   }
 
   pivotRight() {
-    let dat;
     const forev = MV.subtract(this.at, this.eye); // current view forward vector
     const foreLen = MV.length(forev); // current view forward vector length
     const fore = MV.normalize(forev); // current view forward direction
     const right = MV.normalize(MV.cross(fore, up)); // current horizontal right direction
-    const ddir = 1.0 * Math.PI / 180.0; // incremental view angle change
-    dat = MV.add(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
+    const ddir = (1.0 * Math.PI) / 180.0; // incremental view angle change
+    const dat = MV.add(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
     this.at = MV.add(this.at, dat);
   }
 

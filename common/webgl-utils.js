@@ -57,7 +57,7 @@
  * visible.
  */
 
-WebGLUtils = function()
+const WebGLUtils = function()
 {
 
     /**
@@ -175,3 +175,5 @@ window.requestAnimFrame = (function()
             window.setTimeout(callback, 1000 / 60);
         };
 })();
+
+export { WebGLUtils as default };

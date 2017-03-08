@@ -29,8 +29,8 @@ class Plane {
 
   render(worldview, gl, program)
   {
-    let colLoc = gl.getUniformLocation(program, "colour");
-    let mvLoc = gl.getUniformLocation(program, "modelView");
+    let colLoc = gl.getUniformLocation(program, 'colour');
+    let mvLoc = gl.getUniformLocation(program, 'modelView');
     gl.uniform4fv(colLoc, MV.flatten(this.color));
     gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
     gl.drawArrays(gl.TRIANGLES, this.offset, Plane.NV);
@@ -41,7 +41,7 @@ class Plane {
       MV.vec3(-0.5, -0.5, 0.5),
       MV.vec3(-0.5, 0.5, 0.5),
       MV.vec3(0.5, 0.5, 0.5),
-      MV.vec3(0.5, -0.5, 0.5)
+      MV.vec3(0.5, -0.5, 0.5),
     ];
     let vertices = [];
     let indices = [1, 0, 3, 1, 3, 2];
@@ -83,4 +83,4 @@ class Plane {
 Plane.offset = this.offset;
 Plane.vertices = [];
 
-export { Plane as default }
+export { Plane as default };

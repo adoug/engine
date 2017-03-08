@@ -80,5 +80,5 @@ class Block {
 
 Block.NV = Block.getNumberOfVertices();
 
-export { Block as default }
+export { Block as default };
 

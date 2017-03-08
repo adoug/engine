@@ -365,8 +365,7 @@ class MV {
       MV.vec4((x * x * omc) + c, (x * y * omc) - (z * s), (x * z * omc) + (y * s), 0.0),
       MV.vec4((x * y * omc) + (z * s), (y * y * omc) + c, (y * z * omc) - (x * s), 0.0),
       MV.vec4((x * z * omc) - (y * s), (y * z * omc) + (x * s), (z * z * omc) + c, 0.0),
-      MV.vec4(),
-    );
+      MV.vec4());
   }
 
 //----------------------------------------------------------------------------
@@ -418,8 +417,7 @@ class MV {
       MV.vec4(n, -MV.dot(n, eye)),
       MV.vec4(u, -MV.dot(u, eye)),
       MV.vec4(v, -MV.dot(v, eye)),
-      MV.vec4(),
-    );
+      MV.vec4());
   }
 
 //----------------------------------------------------------------------------
