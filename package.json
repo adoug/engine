@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/webpack",
-    "open": "./node_modules/.bin/webpack-dev-server"
+    "built": "./node_modules/.bin/webpack",
+    "start": "webpack-dev-server --content-base dist/"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,6 @@
     "eslint-config-airbnb-base": "^11.1.1",
     "eslint-plugin-import": "^2.2.0",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.4.1"
+    "webpack-dev-server": "^2.9.7"
   }
 }

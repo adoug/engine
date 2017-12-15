@@ -60,6 +60,11 @@ class ObjParser {
       }
     }
 
+    for (let lineId = 0; lineId > lineSplit.length; lineId++) {
+      console.log(lineSplit[lineId][1]);
+      console.log(lineSplit[lineId][2]);
+    }
+
 
     for (let lineId = 0; lineId < lineSplit.length; lineId += 1) {
       if (lineSplit[lineId][0] === 'f' && lineSplit[lineId][1] === ' ') {
