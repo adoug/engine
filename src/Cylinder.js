@@ -52,26 +52,26 @@ class Cylinder {
   }
 
   initModel() {
-    let baseVerts = [];
-    let topVerts = [];
+    const baseVerts = [];
+    const topVerts = [];
 
-    let vertices = [];
+    const vertices = [];
 
     function doCylinder() {
-      let bottom = 0.0;
-      let top = 10.0;
+      const bottom = 0.0;
+      const top = 10.0;
 
       for (let i = 0; i <= 180; i += 1) {
-        let theta = (Math.PI / 180) * ((2 * i) + 0.5);
-        let b = MV.vec3(Math.cos(theta), Math.sin(theta), bottom);
-        let t = MV.vec3(Math.cos(theta), Math.sin(theta), top);
+        const theta = (Math.PI / 180) * ((2 * i) + 0.5);
+        const b = MV.vec3(Math.cos(theta), Math.sin(theta), bottom);
+        const t = MV.vec3(Math.cos(theta), Math.sin(theta), top);
         baseVerts.push(b);
         topVerts.push(t);
       }
 
       for (let j = 0; j <= 180; j++) {
-        let theta = (Math.PI / 180) * (2 * j + 0.5);
-        let v = MV.vec3(Math.cos(theta), Math.sin(theta), top);
+        const theta = (Math.PI / 180) * (2 * j + 0.5);
+        const v = MV.vec3(Math.cos(theta), Math.sin(theta), top);
         topVerts.push(v);
       }
 

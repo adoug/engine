@@ -59,8 +59,8 @@ class Cone {
       const top = MV.vec3(0.0, 0.0, 1.5);
 
       for (let i = 0; i <= 180; i++) {
-        let theta = (Math.PI / 180) * (2 * i + 0.5);
-        let v = MV.vec3(Math.cos(theta), Math.sin(theta), z);
+        const theta = (Math.PI / 180) * (2 * i + 0.5);
+        const v = MV.vec3(Math.cos(theta), Math.sin(theta), z);
         rawverts.push(v);
       }
 

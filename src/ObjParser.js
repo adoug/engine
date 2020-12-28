@@ -24,9 +24,9 @@ class ObjParser {
       if (lineSplit[lineId][0] === 'v' && lineSplit[lineId][1] === ' ') {
         const posString = lineSplit[lineId].split(' ');
         const newPos = [
-            parseFloat(posString[1]),
-            parseFloat(posString[2]),
-            parseFloat(posString[3])];
+          parseFloat(posString[1]),
+          parseFloat(posString[2]),
+          parseFloat(posString[3])];
 
         if (bfirstVertex) {
           this.minValues = newPos;
@@ -89,7 +89,7 @@ class ObjParser {
   }
 
   loadFileAJAX(name) {
-    var xhr = new XMLHttpRequest(),
+    let xhr = new XMLHttpRequest(),
       okStatus = document.location.protocol === 'file:' ? 0 : 200;
     xhr.open('GET', name, false);
     xhr.send(null);

@@ -42,7 +42,7 @@ class Pyramid {
 
 
   initModel() {
-        // The 5 raw vertices of a pyramid
+    // The 5 raw vertices of a pyramid
     this.rawverts = [
       MV.vec3(-0.5, -0.5, 0.5),
       MV.vec3(-0.5, 0.5, 0.5),

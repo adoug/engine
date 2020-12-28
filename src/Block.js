@@ -5,7 +5,6 @@
  */
 
 import MV from '../common/MV';
-import WebGLRenderer from './WebGLRenderer';
 
 class Block {
   constructor(location, angle, scales, gl) {
@@ -38,7 +37,7 @@ class Block {
   }
 
   initModel() {
-        // The 8 raw vertices of a cube
+    // The 8 raw vertices of a cube
     const rawverts = [
       MV.vec3(-0.5, -0.5, 0.5),
       MV.vec3(-0.5, 0.5, 0.5),
@@ -49,13 +48,13 @@ class Block {
       MV.vec3(0.5, 0.5, -0.5),
       MV.vec3(0.5, -0.5, -0.5),
     ];
-        // A local array in which to develop the 36 vertices
+    // A local array in which to develop the 36 vertices
     const vertices = [];
 
-        // A nested function generating the vertices for each face
+    // A nested function generating the vertices for each face
     function quad(a, b, c, d) {
-            // if abcd is an anticlockwise winding on a face
-            // then abc and acd are anticlockwise windings on its triangles
+      // if abcd is an anticlockwise winding on a face
+      // then abc and acd are anticlockwise windings on its triangles
       const indices = [a, b, c, a, c, d];
 
       for (let i = 0; i < indices.length; i += 1) {
@@ -63,9 +62,9 @@ class Block {
       }
     }
 
-        // A nested function generating the cube's faces
+    // A nested function generating the cube's faces
     function doCube() {
-            // Use anticlockwise windings
+      // Use anticlockwise windings
       quad(1, 0, 3, 2);
       quad(2, 3, 7, 6);
       quad(3, 0, 4, 7);

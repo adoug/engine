@@ -23,27 +23,27 @@ class Plane {
   }
 
   update() {
-    let rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
+    const rs = MV.mult(MV.rotate(this.angle, [0, 0, 1]), MV.scalem(this.scales));
     this.trs = MV.mult(MV.translate(this.location), rs);
   }
 
   render(worldview, gl, program) {
-    let colLoc = gl.getUniformLocation(program, 'colour');
-    let mvLoc = gl.getUniformLocation(program, 'modelView');
+    const colLoc = gl.getUniformLocation(program, 'colour');
+    const mvLoc = gl.getUniformLocation(program, 'modelView');
     gl.uniform4fv(colLoc, MV.flatten(this.color));
     gl.uniformMatrix4fv(mvLoc, false, MV.flatten(MV.mult(worldview, this.trs)));
     gl.drawArrays(gl.TRIANGLES, this.offset, this.NV);
   }
 
   static initModel() {
-    let rawverts = [
+    const rawverts = [
       MV.vec3(-0.5, -0.5, 0.5),
       MV.vec3(-0.5, 0.5, 0.5),
       MV.vec3(0.5, 0.5, 0.5),
       MV.vec3(0.5, -0.5, 0.5),
     ];
-    let vertices = [];
-    let indices = [1, 0, 3, 1, 3, 2];
+    const vertices = [];
+    const indices = [1, 0, 3, 1, 3, 2];
 
     function doPlane() {
       for (let i = 0; i < indices.length; i += 1) {
