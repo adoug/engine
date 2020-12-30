@@ -23,11 +23,8 @@ class WebGLRenderer {
     this.then = Date.now() / 1000;
     this.fps = 0.0;
     this.canvas = canvasElement;
+    this.camera = null;
     this.updateCallback = function () {};
-
-    this.up = MV.vec3(0.0, 0.0, 1.0); // VUP along world vertical
-    this.eye = MV.vec3(0.0, -300, 100.0);
-    this.at = MV.vec3(0.0, 100.0, 25.0);
 
     this.worldObjects = [];
 
@@ -92,15 +89,23 @@ class WebGLRenderer {
     }
   }
 
-  render() {
+  render(camera) {
+    if (!this.camera) {
+      this.camera = camera;
+    }
     this.renderer.clear(this.renderer.COLOR_BUFFER_BIT | this.renderer.DEPTH_BUFFER_BIT);
-    this.worldview = MV.lookAt(this.eye, this.at, this.up);
+    this.worldview = MV.lookAt(camera.eye, camera.at, camera.up);
 
     for (let i = 0; i < this.worldObjects.length; i += 1) {
       this.worldObjects[i].update();
       this.worldObjects[i].render(this.worldview, this.renderer, this.program);
     }
-    window.requestAnimFrame(this.update.bind(this));
+    window.requestAnimFrame(this.engineLoop.bind(this));
+  }
+
+  engineLoop() {
+    this.update();
+    this.render(this.camera);
   }
 
   update() {
@@ -113,7 +118,6 @@ class WebGLRenderer {
     this.fps = 1 / elapsedTime;
 
     this.updateCallback(elapsedTime);
-    this.render();
   }
 
   getWorldObject(id) {
@@ -126,81 +130,6 @@ class WebGLRenderer {
 
   addWorldObject(object) {
     this.worldObjects.push(object);
-  }
-
-  setCamera(location, direction) {
-    this.eye = location;
-    this.at = direction;
-  }
-
-  tiltUp() {
-    this.at = MV.add(this.at, MV.vec3(0.0, 0.0, 1.5));
-  }
-
-  climb() {
-    this.at = MV.add(this.at, MV.vec3(0.0, 0.0, 0.5));
-    this.eye = MV.add(this.eye, MV.vec3(0.0, 0.0, 0.5));
-  }
-
-  descend() {
-    this.at = MV.add(this.at, MV.vec3(0.0, 0.0, -0.5));
-    this.eye = MV.add(this.eye, MV.vec3(0.0, 0.0, -0.5));
-  }
-
-  tiltDown() {
-    console.log('tiltDown');
-    this.at = MV.add(this.at, MV.vec3(0.0, 0.0, -1.5));
-  }
-
-  slideForward() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const fore = MV.normalize(forev); // current view forward direction
-    this.at = MV.add(this.at, fore);
-    this.eye = MV.add(this.eye, fore);
-  }
-
-  slideBackward() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const fore = MV.normalize(forev); // current view forward direction
-    this.at = MV.subtract(this.at, fore);
-    this.eye = MV.subtract(this.eye, fore);
-  }
-
-  slideLeft() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
-    this.at = MV.subtract(this.at, right);
-    this.eye = MV.subtract(this.eye, right);
-  }
-
-  slideRight() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
-    this.at = MV.add(this.at, right);
-    this.eye = MV.add(this.eye, right);
-  }
-
-  pivotLeft() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const foreLen = MV.length(forev); // current view forward vector length
-    const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
-    const ddir = (Math.PI) / 180.0; // incremental view anrenderere change
-    const dat = MV.subtract(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore),
-      MV.scale(foreLen * Math.sin(ddir), right));
-    this.at = MV.add(this.at, dat);
-  }
-
-  pivotRight() {
-    const forev = MV.subtract(this.at, this.eye); // current view forward vector
-    const foreLen = MV.length(forev); // current view forward vector length
-    const fore = MV.normalize(forev); // current view forward direction
-    const right = MV.normalize(MV.cross(fore, this.up)); // current horizontal right direction
-    const ddir = (Math.PI) / 180.0; // incremental view angle change
-    const dat = MV.add(MV.scale(foreLen * (Math.cos(ddir) - 1.0), fore), MV.scale(foreLen * Math.sin(ddir), right));
-    this.at = MV.add(this.at, dat);
   }
 
   addSubdata(data) {
@@ -230,7 +159,6 @@ class WebGLRenderer {
   onKey(callback) {
     if (callback && typeof callback !== 'undefined') {
       document.addEventListener('keydown', (event) => {
-        console.log(event.key);
         callback(event.key);
       });
     }

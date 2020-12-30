@@ -1,10 +1,17 @@
-import App, { Block, Plane, Cone, Cylinder, Pyramid, Scene, MV, Utils } from './app';
-
+import App, {
+  Block, Plane, Cone, Cylinder, Pyramid, Scene, MV, Utils,
+} from './app';
+import Camera from './Camera';
 
 class Test01 {
   constructor(canvas) {
     this.canvas = canvas;
     this.app = new App(this.canvas);
+    this.camera = new Camera(
+      MV.vec3(0.0, 0.0, 1.0),
+      MV.vec3(0.0, 0.1, 200.0),
+      MV.vec3(0.0, 0.11, -1.0),
+    );
   }
 
   addGround() {
@@ -13,9 +20,13 @@ class Test01 {
     this.app.addWorldObject(ground);
   }
 
-  // TODO: Sceen to 3d location
+  // TODO: Screen to 3d location
   addBlock(event) {
-    const block = new Block(MV.vec3(event.offsetX, event.offsetY, 2.05), 0, MV.vec3(5.0, 5.0, 5.0), this.app.gl);
+    const block = new Block(
+      MV.vec3(event.offsetX, event.offsetY, 2.05),
+      0,
+      MV.vec3(5.0, 5.0, 5.0), this.app.gl,
+    );
     block.setModelColour(Scene.Colors.grey);
     this.app.addWorldObject(block);
   }
@@ -44,7 +55,6 @@ class Test01 {
     this.app.addWorldObject(myPath1);
     this.app.addWorldObject(myPath2);
   }
-
 
   addTrees() {
     for (let i = 2; i < 10; i++) {
@@ -87,42 +97,38 @@ class Test01 {
     // objModel.setModelColour(Scene.red);
     // this.app.addWorldObject(objModel);
 
-
-    // Setup camera
-    this.app.setCamera(MV.vec3(0.0, -300, 100.0), MV.vec3(0.0, 100.0, 25.0));
-
     // Keyboard camera control
     const keyDownEventHandler = function eventHandler(key) {
       switch (key) {
         case 'w':
-          this.app.gl.slideForward();
+          this.camera.slideForward();
           break;
         case 's':
-          this.app.gl.slideBackward();
+          this.camera.slideBackward();
           break;
         case 'a':
-          this.app.gl.slideLeft();
+          this.camera.slideLeft();
           break;
         case 'd':
-          this.app.gl.slideRight();
+          this.camera.slideRight();
           break;
         case 'q':
-          this.app.gl.pivotLeft();
+          this.camera.pivotLeft();
           break;
         case 'e':
-          this.app.gl.pivotRight();
+          this.camera.pivotRight();
           break;
         case 'z':
-          this.app.gl.tiltUp();
+          this.camera.tiltUp();
           break;
         case 'x':
-          this.app.gl.tiltDown();
+          this.camera.tiltDown();
           break;
         case 'c':
-          this.app.gl.climb();
+          this.camera.climb();
           break;
         case 'v':
-          this.app.gl.descend();
+          this.camera.descend();
           break;
         default:
           break;
@@ -132,7 +138,7 @@ class Test01 {
     this.app.gl.onClick(this.addBlock.bind(this));
     this.app.gl.onKey(keyDownEventHandler.bind(this));
     this.app.gl.onUpdate(this.updateCallback);
-    this.app.gl.render();
+    this.app.gl.render(this.camera);
   }
 
   // for (let i = 2; i < 10; i += 1) {

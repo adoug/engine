@@ -23,8 +23,8 @@ class App {
     this.gl.setColor(0.6, 0.8, 1.0, 1.0);
   }
 
-  setCamera(eye, up) {
-    this.gl.setCamera(eye, up);
+  setCamera(direction, position) {
+    this.gl.setCamera(direction, position);
   }
 
   addWorldObject(object) {
@@ -49,4 +49,6 @@ class App {
 }
 
 export { App as default };
-export { Block, Plane, Cone, Cylinder, Pyramid, SceneObject, Scene, MV, Utils };
+export {
+  Block, Plane, Cone, Cylinder, Pyramid, SceneObject, Scene, MV, Utils,
+};
